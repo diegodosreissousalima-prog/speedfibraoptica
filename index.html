@@ -50,6 +50,9 @@ nav a:hover{opacity:1}
 .speedt{background:var(--amber);color:var(--navy-deep)}
 .speedt:hover{background:#E5A31F}
 .speedt svg{width:20px;height:20px;fill:currentColor;flex:none}
+.speedt .pulse{background:#1E9E52}
+.lbl-s{display:none}
+@media (max-width:1100px){.speedt .lbl-s{display:inline}}
 .hdr-actions .btn.ghost{border-width:2px}
 .hdr-actions .btn.ghost:hover{background:rgba(255,255,255,.1)}
 @media (max-width:420px){.xs-hide{display:none}.speedt{padding:7px 9px!important}.speedt svg{width:18px;height:18px}}
@@ -149,6 +152,10 @@ h2{font-size:clamp(30px,4vw,44px);letter-spacing:-.03em;line-height:1.05;font-we
 .s2 .btn{background:var(--navy-deep)}
 .s3{background:var(--amber);color:var(--navy-deep)}
 .s3 .btn{background:var(--navy-deep)}
+.s4{background:linear-gradient(120deg,#111A52 0%,#2B3DB0 100%)}
+.s4 .big{color:var(--amber);font-size:clamp(52px,11vw,150px)}
+.s4 .btn{background:var(--amber);color:var(--navy-deep)}
+.s4 .btn:hover{background:#E5A31F}
 .carousel .nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(0,0,0,.28);color:#fff;font-size:28px;line-height:1;cursor:pointer;z-index:2}
 .carousel .prev{left:12px}.carousel .next{right:12px}
 .dots{position:absolute;bottom:22px;left:0;right:0;display:flex;justify-content:center;gap:10px;z-index:2}
@@ -219,11 +226,10 @@ nav a{white-space:nowrap}
       <a href="#planos">Planos</a>
       <a href="#cobertura">Cobertura</a>
       <a href="#servicos">Serviços</a>
-      <a href="#status">Status</a>
       <a href="#contato">Contato</a>
     </nav>
     <div class="hdr-actions">
-      <a class="btn speedt" href="https://www.speedtest.net/pt" target="_blank" rel="noopener" aria-label="Teste de velocidade"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a10 10 0 0 0-8.7 15h17.4A10 10 0 0 0 12 4Zm0 2a8 8 0 0 1 7.5 11h-15A8 8 0 0 1 12 6Zm4.2 2.4-5 4.6a1.6 1.6 0 1 0 2.2 2.2l2.8-6.8Z"/></svg><span class="lbl">Teste de velocidade</span></a>
+      <a class="btn speedt" href="#status" aria-label="Status dos apps"><span class="pulse" aria-hidden="true"></span><span class="lbl">Status dos apps</span><span class="lbl-s">Apps</span></a>
       <a class="btn green" href="https://speedinternet.sgp.tsmx.com.br/central" target="_blank" rel="noopener" title="Central do assinante: emitir 2ª via de boleto">2ª via<span class="xs-hide"> de boleto</span></a>
       <a class="btn" data-wa="Olá! Quero assinar a internet da Speed." href="#">Assinar</a>
     </div>
@@ -233,22 +239,25 @@ nav a{white-space:nowrap}
 <main id="inicio">
 <section class="carousel" aria-roledescription="carrossel" aria-label="Destaques da Speed" style="padding:0">
   <div class="track" id="track">
-    <div class="slide s0" role="group" aria-roledescription="slide" aria-label="1 de 4">
+    <div class="slide s0" role="group" aria-roledescription="slide" aria-label="1 de 5">
       <div class="wrap"><p class="big">1.000 Megas</p><h2>Planos de até 1.000 megas na cidade e na zona rural</h2><p>Fibra óptica de alta velocidade em Paraibano e nos povoados atendidos pela Speed.</p><a class="btn" href="#planos">Ver planos</a></div>
     </div>
-    <div class="slide s1" role="group" aria-roledescription="slide" aria-label="2 de 4">
+    <div class="slide s4" role="group" aria-roledescription="slide" aria-label="2 de 5">
+      <div class="wrap"><p class="big">Velocidade</p><h2>Teste a velocidade da sua internet</h2><p>Confira em poucos segundos quantos megas estão chegando na sua casa.</p><a class="btn" href="https://www.speedtest.net/pt" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 4a10 10 0 0 0-8.7 15h17.4A10 10 0 0 0 12 4Zm0 2a8 8 0 0 1 7.5 11h-15A8 8 0 0 1 12 6Zm4.2 2.4-5 4.6a1.6 1.6 0 1 0 2.2 2.2l2.8-6.8Z"/></svg>Fazer teste de velocidade</a></div>
+    </div>
+    <div class="slide s1" role="group" aria-roledescription="slide" aria-label="3 de 5">
       <div class="wrap"><p class="big">400+ km</p><h2>Rede FTTH com mais de 400 km</h2><p>Fibra óptica levada até a sua casa, sem trechos de cabo comum no caminho.</p><a class="btn" href="#cobertura">Ver onde chegamos</a></div>
     </div>
-    <div class="slide s2" role="group" aria-roledescription="slide" aria-label="3 de 4">
+    <div class="slide s2" role="group" aria-roledescription="slide" aria-label="4 de 5">
       <div class="wrap"><p class="big">Wi-Fi 6</p><h2>Tecnologia Wi-Fi 6</h2><p>Mais velocidade e estabilidade mesmo com vários aparelhos conectados ao mesmo tempo.</p><a class="btn" href="#planos">Ver planos</a></div>
     </div>
-    <div class="slide s3" role="group" aria-roledescription="slide" aria-label="4 de 4">
+    <div class="slide s3" role="group" aria-roledescription="slide" aria-label="5 de 5">
       <div class="wrap"><p class="big">Suporte</p><h2>Suporte de alta eficiência</h2><p>Atendimento direto pelo WhatsApp sempre que você precisar de ajuda com sua conexão.</p><a class="btn" data-wa="Olá! Preciso de suporte da Speed." href="#">Falar com o suporte</a></div>
     </div>
   </div>
   <button class="nav prev" aria-label="Slide anterior">‹</button>
   <button class="nav next" aria-label="Próximo slide">›</button>
-  <div class="dots" role="tablist" aria-label="Escolher slide"><button aria-label="Slide 1" aria-current="true"></button><button aria-label="Slide 2"></button><button aria-label="Slide 3"></button><button aria-label="Slide 4"></button></div>
+  <div class="dots" role="tablist" aria-label="Escolher slide"><button aria-label="Slide 1" aria-current="true"></button><button aria-label="Slide 2"></button><button aria-label="Slide 3"></button><button aria-label="Slide 4"></button><button aria-label="Slide 5"></button></div>
 </section>
 
 <section class="hero" style="padding:0">
@@ -451,7 +460,7 @@ tabs.forEach(t => t.addEventListener("click", () => {
     {n:"Netflix",c:"#E50914",u:"https://www.netflix.com/favicon.ico",d:"netflix"},
     {n:"TikTok",c:"#111111",u:"https://www.tiktok.com/favicon.ico",d:"tiktok"},
     {n:"Google",c:"#4285F4",u:"https://www.google.com/favicon.ico",d:"google"},
-    {n:"Gmail",c:"#EA4335",u:"https://mail.google.com/favicon.ico",d:"gmail"},
+    {n:"Gmail",c:"#EA4335",u:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",d:"gmail"},
     {n:"Spotify",c:"#1DB954",u:"https://open.spotify.com/favicon.ico",d:"spotify"},
     {n:"Free Fire",c:"#F29A1F",u:"https://ff.garena.com/favicon.ico",d:"free-fire"}
   ];
