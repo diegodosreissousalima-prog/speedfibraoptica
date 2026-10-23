@@ -203,7 +203,9 @@ nav a{white-space:nowrap}
 @media (max-width:560px){.apps{grid-template-columns:1fr 1fr;gap:10px}.apps li{padding:12px}.apps .lg{width:28px;height:28px;font-size:13px}.apps .nm{font-size:15px}.apps .stt{font-size:13px}}
 .apps li{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
 .apps .top{display:flex;align-items:center;gap:10px}
-.apps .lg{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;flex:none}
+.apps .lg{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;flex:none;background:var(--c)}
+.apps .lg.logo{background:#fff;border:1px solid var(--line)}
+.apps .lg img{width:24px;height:24px;display:block}
 .apps .nm{font-weight:800;font-size:17px}
 .apps .stt{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}
 .apps .dot{width:10px;height:10px;border-radius:50%;background:#aab;flex:none}
@@ -453,21 +455,21 @@ tabs.forEach(t => t.addEventListener("click", () => {
 // Status dos apps: testa de verdade, a partir da conexão do visitante, se cada serviço responde
 (function(){
   const APPS=[
-    {n:"WhatsApp",c:"#25D366",u:"https://web.whatsapp.com/favicon.ico",d:"whatsapp"},
-    {n:"Instagram",c:"#DD2A7B",u:"https://www.instagram.com/favicon.ico",d:"instagram"},
-    {n:"Facebook",c:"#1877F2",u:"https://www.facebook.com/favicon.ico",d:"facebook"},
-    {n:"YouTube",c:"#FF0000",u:"https://www.youtube.com/favicon.ico",d:"youtube"},
-    {n:"Netflix",c:"#E50914",u:"https://www.netflix.com/favicon.ico",d:"netflix"},
-    {n:"TikTok",c:"#111111",u:"https://www.tiktok.com/favicon.ico",d:"tiktok"},
-    {n:"Google",c:"#4285F4",u:"https://www.google.com/favicon.ico",d:"google"},
-    {n:"Gmail",c:"#EA4335",u:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",d:"gmail"},
-    {n:"Spotify",c:"#1DB954",u:"https://open.spotify.com/favicon.ico",d:"spotify"},
-    {n:"Free Fire",c:"#F29A1F",u:"https://ff.garena.com/favicon.ico",d:"free-fire"}
+    {n:"WhatsApp",i:"whatsapp.com",c:"#25D366",u:"https://web.whatsapp.com/favicon.ico",d:"whatsapp"},
+    {n:"Instagram",i:"instagram.com",c:"#DD2A7B",u:"https://www.instagram.com/favicon.ico",d:"instagram"},
+    {n:"Facebook",i:"facebook.com",c:"#1877F2",u:"https://www.facebook.com/favicon.ico",d:"facebook"},
+    {n:"YouTube",i:"youtube.com",c:"#FF0000",u:"https://www.youtube.com/favicon.ico",d:"youtube"},
+    {n:"Netflix",i:"netflix.com",c:"#E50914",u:"https://www.netflix.com/favicon.ico",d:"netflix"},
+    {n:"TikTok",i:"tiktok.com",c:"#111111",u:"https://www.tiktok.com/favicon.ico",d:"tiktok"},
+    {n:"Google",i:"google.com",c:"#4285F4",u:"https://www.google.com/favicon.ico",d:"google"},
+    {n:"Gmail",i:"mail.google.com",c:"#EA4335",u:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",d:"gmail"},
+    {n:"Spotify",i:"spotify.com",c:"#1DB954",u:"https://open.spotify.com/favicon.ico",d:"spotify"},
+    {n:"Free Fire",i:"ff.garena.com",c:"#F29A1F",u:"https://ff.garena.com/favicon.ico",d:"free-fire"}
   ];
   const DD="https://downdetector.com.br/fora-do-ar/";
   const list=document.getElementById("apps"), sum=document.getElementById("st-sum"), time=document.getElementById("st-time"), btn=document.getElementById("st-run");
   if(!list) return;
-  list.innerHTML=APPS.map((a,i)=>`<li><div class="top"><span class="lg" style="background:${a.c}" aria-hidden="true">${a.n[0]}</span><span class="nm">${a.n}</span></div>
+  list.innerHTML=APPS.map((a,i)=>`<li><div class="top"><span class="lg logo" style="--c:${a.c}" data-l="${a.n[0]}" aria-hidden="true"><img src="https://www.google.com/s2/favicons?domain=${a.i}&sz=64" alt="" width="24" height="24" loading="lazy" onerror="this.parentNode.classList.remove('logo');this.parentNode.textContent=this.parentNode.dataset.l"></span><span class="nm">${a.n}</span></div>
     <div class="stt wait" id="st${i}"><span class="dot"></span><span>verificando…</span></div>
     <a class="dd" href="${DD}${a.d}/" target="_blank" rel="noopener" aria-label="Ver relatos de falha do ${a.n} no Downdetector">Ver relatos ↗</a></li>`).join("");
   function probe(url){
