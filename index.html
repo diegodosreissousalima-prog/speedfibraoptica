@@ -175,6 +175,36 @@ footer a{color:#fff}
   .bar .btn{padding:8px 12px;font-size:14px}
   .logo{font-size:24px}
 }
+
+/* Status dos apps */
+.st-btn{display:inline-flex;align-items:center;gap:8px}
+.pulse{width:10px;height:10px;border-radius:50%;background:#2fd06b;box-shadow:0 0 0 0 rgba(47,208,107,.6);animation:pl 1.8s infinite;flex:none}
+@keyframes pl{70%{box-shadow:0 0 0 9px rgba(47,208,107,0)}100%{box-shadow:0 0 0 0 rgba(47,208,107,0)}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+#status{background:var(--bg);scroll-margin-top:64px}
+nav a{white-space:nowrap}
+.st-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin-bottom:20px}
+.st-head .lead{margin:0}
+.st-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.st-tools small{color:var(--muted);font-size:14px}
+.st-sum{border-radius:16px;padding:16px 18px;margin-bottom:18px;font-weight:600;border:1px solid var(--line);background:var(--surface);display:flex;gap:12px;align-items:flex-start}
+.st-sum .ic{font-size:22px;line-height:1}
+.st-sum.ok{border-color:#1E9E52}.st-sum.warn{border-color:var(--amber)}.st-sum.bad{border-color:#d93a2b}
+.st-sum p{margin:2px 0 0;font-weight:500;color:var(--muted)}
+.st-sum a{color:var(--orange);font-weight:800}
+.apps{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+@media (max-width:560px){.apps{grid-template-columns:1fr 1fr;gap:10px}.apps li{padding:12px}.apps .lg{width:28px;height:28px;font-size:13px}.apps .nm{font-size:15px}.apps .stt{font-size:13px}}
+.apps li{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.apps .top{display:flex;align-items:center;gap:10px}
+.apps .lg{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;flex:none}
+.apps .nm{font-weight:800;font-size:17px}
+.apps .stt{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}
+.apps .dot{width:10px;height:10px;border-radius:50%;background:#aab;flex:none}
+.apps .ok .dot{background:#1E9E52}.apps .slow .dot{background:var(--amber)}.apps .bad .dot{background:#d93a2b}.apps .wait .dot{animation:pl 1.2s infinite;background:#8a92b8}
+.apps .ok{color:#1b8a48}.apps .slow{color:#a86d00}.apps .bad{color:#c22f21}.apps .wait{color:var(--muted)}
+.apps .dd{font-size:14px;font-weight:700;color:var(--orange)}
+.st-note{color:var(--muted);font-size:14px;margin-top:14px}
+@media (prefers-color-scheme:dark){.apps .ok{color:#4fd98a}.apps .slow{color:#f7c35b}.apps .bad{color:#ff7b6b}}
 </style>
 </head>
 <body>
@@ -189,6 +219,7 @@ footer a{color:#fff}
       <a href="#planos">Planos</a>
       <a href="#cobertura">Cobertura</a>
       <a href="#servicos">Serviços</a>
+      <a href="#status">Status</a>
       <a href="#contato">Contato</a>
     </nav>
     <div class="hdr-actions">
@@ -228,6 +259,7 @@ footer a{color:#fff}
       <div class="actions">
         <a class="btn" href="#planos">Ver planos</a>
         <a class="btn ghost" data-wa="Olá! Quero saber se a Speed atende meu endereço." href="#">Consultar meu endereço</a>
+        <a class="btn ghost st-btn" href="#status"><span class="pulse" aria-hidden="true"></span>Status dos apps</a>
       </div>
       <div class="where" aria-label="Cobertura"><span>Piauí</span><span>Maranhão</span></div>
     </div>
@@ -326,6 +358,21 @@ footer a{color:#fff}
   </div>
 </section>
 
+<section id="status" aria-labelledby="st-h">
+  <div class="wrap">
+    <div class="st-head">
+      <div>
+        <h2 id="st-h">Status dos apps</h2>
+        <p class="lead">O app parou? Veja se o problema é no aplicativo ou na sua conexão. O teste roda agora, direto da sua internet.</p>
+      </div>
+      <div class="st-tools"><button class="btn" id="st-run" type="button">Verificar agora</button><small id="st-time" aria-live="polite"></small></div>
+    </div>
+    <div class="st-sum" id="st-sum" aria-live="polite"><span class="ic">⏳</span><div>Verificando os aplicativos…</div></div>
+    <ul class="apps" id="apps"></ul>
+    <p class="st-note">O teste mede se cada serviço responde a partir da sua conexão. Em “Ver relatos”, o Downdetector (downdetector.com.br) mostra se outras pessoas estão relatando falhas no app agora.</p>
+  </div>
+</section>
+
 <section class="cta" id="contato">
   <div class="wrap">
     <h2>Pronto para ficar conectado?</h2>
@@ -393,6 +440,67 @@ tabs.forEach(t => t.addEventListener("click", () => {
     document.getElementById(x.getAttribute("aria-controls")).hidden = !on;
   });
 }));
+
+// Status dos apps: testa de verdade, a partir da conexão do visitante, se cada serviço responde
+(function(){
+  const APPS=[
+    {n:"WhatsApp",c:"#25D366",u:"https://web.whatsapp.com/favicon.ico",d:"whatsapp"},
+    {n:"Instagram",c:"#DD2A7B",u:"https://www.instagram.com/favicon.ico",d:"instagram"},
+    {n:"Facebook",c:"#1877F2",u:"https://www.facebook.com/favicon.ico",d:"facebook"},
+    {n:"YouTube",c:"#FF0000",u:"https://www.youtube.com/favicon.ico",d:"youtube"},
+    {n:"Netflix",c:"#E50914",u:"https://www.netflix.com/favicon.ico",d:"netflix"},
+    {n:"TikTok",c:"#111111",u:"https://www.tiktok.com/favicon.ico",d:"tiktok"},
+    {n:"Google",c:"#4285F4",u:"https://www.google.com/favicon.ico",d:"google"},
+    {n:"Gmail",c:"#EA4335",u:"https://mail.google.com/favicon.ico",d:"gmail"},
+    {n:"Spotify",c:"#1DB954",u:"https://open.spotify.com/favicon.ico",d:"spotify"},
+    {n:"Free Fire",c:"#F29A1F",u:"https://ff.garena.com/favicon.ico",d:"free-fire"}
+  ];
+  const DD="https://downdetector.com.br/fora-do-ar/";
+  const list=document.getElementById("apps"), sum=document.getElementById("st-sum"), time=document.getElementById("st-time"), btn=document.getElementById("st-run");
+  if(!list) return;
+  list.innerHTML=APPS.map((a,i)=>`<li><div class="top"><span class="lg" style="background:${a.c}" aria-hidden="true">${a.n[0]}</span><span class="nm">${a.n}</span></div>
+    <div class="stt wait" id="st${i}"><span class="dot"></span><span>verificando…</span></div>
+    <a class="dd" href="${DD}${a.d}/" target="_blank" rel="noopener" aria-label="Ver relatos de falha do ${a.n} no Downdetector">Ver relatos ↗</a></li>`).join("");
+  function probe(url){
+    return new Promise(res=>{
+      const t0=performance.now(), ctl=("AbortController" in window)?new AbortController():null;
+      const to=setTimeout(()=>{ ctl&&ctl.abort(); res({ok:false,ms:null}); },7000);
+      fetch(url+"?t="+Date.now(),{mode:"no-cors",cache:"no-store",signal:ctl?ctl.signal:undefined})
+        .then(()=>{ clearTimeout(to); res({ok:true,ms:Math.round(performance.now()-t0)}); })
+        .catch(()=>{ clearTimeout(to); res({ok:false,ms:null}); });
+    });
+  }
+  const lista=a=>a.length>1?a.slice(0,-1).join(", ")+" e "+a[a.length-1]:a[0];
+  let busy=false;
+  async function run(){
+    if(busy) return; busy=true; btn.disabled=true; btn.textContent="Verificando…";
+    APPS.forEach((a,i)=>{ const el=document.getElementById("st"+i); el.className="stt wait"; el.lastElementChild.textContent="verificando…"; });
+    if(!navigator.onLine){ sum.className="st-sum bad"; sum.innerHTML='<span class="ic">📵</span><div>Seu aparelho está sem internet.<p>Confira o Wi-Fi ou os dados móveis. Se o roteador da Speed estiver com luz vermelha, <a data-wa2 href="#">chame a Speed no WhatsApp</a>.</p></div>'; }
+    const r=await Promise.all(APPS.map(a=>probe(a.u)));
+    let bad=[], slow=[];
+    r.forEach((x,i)=>{ const el=document.getElementById("st"+i), a=APPS[i];
+      if(!x.ok){ bad.push(a.n); el.className="stt bad"; el.lastElementChild.textContent="Sem resposta"; }
+      else if(x.ms>2500){ slow.push(a.n); el.className="stt slow"; el.lastElementChild.textContent="Lento · "+x.ms+" ms"; }
+      else { el.className="stt ok"; el.lastElementChild.textContent="Online · "+x.ms+" ms"; }
+    });
+    const n=APPS.length;
+    if(bad.length>=n-1){ sum.className="st-sum bad"; sum.innerHTML='<span class="ic">⚠️</span><div>Nenhum app respondeu: o problema parece ser a conexão.<p>Desligue o roteador da tomada por 30 segundos e ligue de novo. Se continuar, <a data-wa2 href="#">chame o suporte da Speed no WhatsApp</a>.</p></div>'; }
+    else if(bad.length){ sum.className="st-sum warn"; sum.innerHTML=`<span class="ic">🔎</span><div>Sua internet está funcionando, mas ${lista(bad)} não ${bad.length>1?"responderam":"respondeu"}.<p>Provável instabilidade no próprio aplicativo. Toque em “Ver relatos” para ver se outras pessoas estão com o mesmo problema.</p></div>`; }
+    else if(slow.length){ sum.className="st-sum warn"; sum.innerHTML=`<span class="ic">🐢</span><div>Tudo respondendo, mas ${lista(slow)} ${slow.length>1?"estão lentos":"está lento"}.<p>Faça o teste de velocidade no topo da página. Se a velocidade estiver baixa, <a data-wa2 href="#">fale com a Speed</a>.</p></div>`; }
+    else { sum.className="st-sum ok"; sum.innerHTML='<span class="ic">✅</span><div>Todos os apps estão respondendo pela sua conexão.</div>'; }
+    sum.querySelectorAll("[data-wa2]").forEach(a=>{ a.href="https://wa.me/5599982522383?text="+encodeURIComponent("Olá! Estou com problema na internet da Speed."); a.target="_blank"; a.rel="noopener"; });
+    time.textContent="Última verificação: "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    btn.disabled=false; btn.textContent="Verificar agora"; busy=false;
+  }
+  btn.addEventListener("click",run);
+  // roda quando a seção aparece e repete a cada 60 s enquanto ela estiver na tela
+  let timer=null, seen=false;
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){ if(!seen){ seen=true; run(); } if(!timer) timer=setInterval(()=>{ if(!document.hidden) run(); },60000); }
+    else if(timer){ clearInterval(timer); timer=null; }
+  }));
+  io.observe(document.getElementById("status"));
+})();
 </script>
 </body>
 </html>
