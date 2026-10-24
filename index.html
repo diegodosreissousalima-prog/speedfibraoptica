@@ -466,7 +466,7 @@ tabs.forEach(t => t.addEventListener("click", () => {
     {n:"Netflix",i:"netflix.com",c:"#E50914",u:"https://www.netflix.com/favicon.ico",d:"netflix"},
     {n:"TikTok",i:"tiktok.com",c:"#111111",u:"https://www.tiktok.com/favicon.ico",d:"tiktok"},
     {n:"Google",i:"google.com",c:"#4285F4",u:"https://www.google.com/favicon.ico",d:"google"},
-    {n:"Gmail",i:"mail.google.com",c:"#EA4335",u:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",d:"gmail"},
+    {n:"Gmail",i:"mail.google.com",logo:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",c:"#EA4335",u:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",d:"gmail"},
     {n:"Spotify",i:"spotify.com",c:"#1DB954",u:"https://open.spotify.com/favicon.ico",d:"spotify"},
     {n:"Telegram",i:"telegram.org",c:"#229ED9",u:"https://telegram.org/favicon.ico",d:"telegram"},
     {n:"Shopee",i:"shopee.com.br",c:"#EE4D2D",u:"https://shopee.com.br/favicon.ico",d:"shopee"},
@@ -477,7 +477,18 @@ tabs.forEach(t => t.addEventListener("click", () => {
     {n:"Itaú",i:"itau.com.br",c:"#EC7000",u:"https://www.itau.com.br/favicon.ico",d:"itau"},
     {n:"Bradesco",i:"banco.bradesco",c:"#CC092F",u:"https://banco.bradesco/favicon.ico",d:"bradesco"},
     {n:"Santander",i:"santander.com.br",c:"#EC0000",u:"https://www.santander.com.br/favicon.ico",d:"santander"},
-    {n:"Inter",i:"inter.co",c:"#FF7A00",u:"https://inter.co/favicon.ico",d:"banco-inter"}
+    {n:"Inter",i:"inter.co",c:"#FF7A00",u:"https://inter.co/favicon.ico",d:"banco-inter"},
+    {n:"PicPay",i:"picpay.com",c:"#11C76F",u:"https://picpay.com/favicon.ico",d:"picpay"},
+    {n:"iFood",i:"ifood.com.br",c:"#EA1D2C",u:"https://www.ifood.com.br/favicon.ico",d:"ifood"},
+    {n:"Uber",i:"uber.com",c:"#000000",u:"https://www.uber.com/favicon.ico",d:"uber"},
+    {n:"Amazon",i:"amazon.com.br",c:"#FF9900",u:"https://www.amazon.com.br/favicon.ico",d:"amazon"},
+    {n:"Prime Video",i:"primevideo.com",c:"#00A8E1",u:"https://www.primevideo.com/favicon.ico",q:"Prime Video"},
+    {n:"Disney+",i:"disneyplus.com",c:"#113CCF",u:"https://www.disneyplus.com/favicon.ico",q:"Disney+"},
+    {n:"Globoplay",i:"globoplay.globo.com",c:"#F2002B",u:"https://globoplay.globo.com/favicon.ico",d:"globoplay"},
+    {n:"Twitch",i:"twitch.tv",c:"#9146FF",u:"https://www.twitch.tv/favicon.ico",d:"twitch"},
+    {n:"Discord",i:"discord.com",c:"#5865F2",u:"https://discord.com/favicon.ico",d:"discord"},
+    {n:"Outlook",i:"outlook.live.com",c:"#0078D4",u:"https://outlook.live.com/favicon.ico",q:"Outlook"},
+    {n:"Roblox",i:"roblox.com",c:"#111111",u:"https://www.roblox.com/favicon.ico",d:"roblox"}
   ];
   const DD="https://downdetector.com.br/fora-do-ar/";
   const list=document.getElementById("apps"), sum=document.getElementById("st-sum"), time=document.getElementById("st-time"), btn=document.getElementById("st-run");
@@ -485,7 +496,7 @@ tabs.forEach(t => t.addEventListener("click", () => {
   list.innerHTML=APPS.map((a,i)=>`<li><div class="top"><span class="lg logo" style="--c:${a.c}" data-l="${a.n[0]}" aria-hidden="true"><img src="${a.logo||"https://www.google.com/s2/favicons?domain="+a.i+"&sz=64"}" alt="" width="24" height="24" loading="lazy" onerror="this.parentNode.classList.remove('logo');this.parentNode.textContent=this.parentNode.dataset.l"></span><span class="nm">${a.n}</span></div>
     <div class="stt wait" id="st${i}"><span class="dot"></span><span>verificando…</span></div>
     <div class="spark" id="sp${i}" aria-hidden="true"></div><div class="spk" id="sk${i}"></div>
-    <a class="dd" href="${DD}${a.d}/" target="_blank" rel="noopener" aria-label="Ver relatos de falha do ${a.n} no Downdetector">Ver relatos ↗</a></li>`).join("");
+    <a class="dd" href="${a.d?DD+a.d+"/":"https://downdetector.com.br/search/?q="+encodeURIComponent(a.q)}" target="_blank" rel="noopener" aria-label="Ver relatos de falha do ${a.n} no Downdetector">Ver relatos ↗</a></li>`).join("");
   function probe(url){
     return new Promise(res=>{
       const t0=performance.now(), ctl=("AbortController" in window)?new AbortController():null;
@@ -500,10 +511,10 @@ tabs.forEach(t => t.addEventListener("click", () => {
   const HK="speed-status-hist", MAXP=30, MAXAGE=6*3600e3;
   let H={}; try{ H=JSON.parse(localStorage.getItem(HK)||"{}")||{}; }catch(e){ H={}; }
   const now=()=>Date.now();
-  APPS.forEach(a=>{ H[a.d]=(H[a.d]||[]).filter(p=>now()-p.t<MAXAGE).slice(-MAXP); });
+  APPS.forEach(a=>{ a.d=a.d||""; a.k=a.d||a.n; H[a.k]=(H[a.k]||[]).filter(p=>now()-p.t<MAXAGE).slice(-MAXP); });
   function save(){ try{ localStorage.setItem(HK,JSON.stringify(H)); }catch(e){} }
   function spark(i){
-    const a=APPS[i], pts=H[a.d]||[], el=document.getElementById("sp"+i), k=document.getElementById("sk"+i); if(!el) return;
+    const a=APPS[i], pts=H[a.k]||[], el=document.getElementById("sp"+i), k=document.getElementById("sk"+i); if(!el) return;
     if(pts.length<2){ el.innerHTML=""; k.textContent="montando o gráfico…"; return; }
     const W=200,Hh=40,pad=3, n=pts.length, step=(W-2*pad)/Math.max(n-1,1), x0=pad;
     const okms=pts.filter(p=>p.ms!=null).map(p=>p.ms), cap=Math.min(3500,Math.max(600,...okms,0)*1.25);
@@ -526,9 +537,9 @@ tabs.forEach(t => t.addEventListener("click", () => {
     if(busy) return; busy=true; btn.disabled=true; btn.textContent="Verificando…";
     APPS.forEach((a,i)=>{ const el=document.getElementById("st"+i); el.className="stt wait"; el.lastElementChild.textContent="verificando…"; });
     if(!navigator.onLine){ sum.className="st-sum bad"; sum.innerHTML='<span class="ic">📵</span><div>Seu aparelho está sem internet.<p>Confira o Wi-Fi ou os dados móveis. Se o roteador da Speed estiver com luz vermelha, <a data-wa2 href="#">chame a Speed no WhatsApp</a>.</p></div>'; }
-    const r=await Promise.all(APPS.map(a=>probe(a.u)));
+    const r=await Promise.all(APPS.map(async a=>{ const [x,y]=await Promise.all([probe(a.u),probe("https://"+a.i+"/")]); return x.ok&&y.ok?{ok:true,ms:Math.min(x.ms,y.ms)}:x.ok?x:y; }));
     let bad=[], slow=[];
-    r.forEach((x,i)=>{ const a0=APPS[i]; (H[a0.d]=H[a0.d]||[]).push({t:now(),ms:x.ok?x.ms:null}); H[a0.d]=H[a0.d].slice(-MAXP); });
+    r.forEach((x,i)=>{ const a0=APPS[i]; (H[a0.k]=H[a0.k]||[]).push({t:now(),ms:x.ok?x.ms:null}); H[a0.k]=H[a0.k].slice(-MAXP); });
     save(); APPS.forEach((a,i)=>spark(i));
     r.forEach((x,i)=>{ const el=document.getElementById("st"+i), a=APPS[i];
       if(!x.ok){ bad.push(a.n); el.className="stt bad"; el.lastElementChild.textContent="Sem resposta"; }
