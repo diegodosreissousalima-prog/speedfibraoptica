@@ -468,13 +468,10 @@ tabs.forEach(t => t.addEventListener("click", () => {
     {n:"Google",i:"google.com",c:"#4285F4",u:"https://www.google.com/favicon.ico",d:"google"},
     {n:"Gmail",i:"mail.google.com",c:"#EA4335",u:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",d:"gmail"},
     {n:"Spotify",i:"spotify.com",c:"#1DB954",u:"https://open.spotify.com/favicon.ico",d:"spotify"},
-    {n:"Free Fire",i:"ff.garena.com",c:"#F29A1F",u:"https://ff.garena.com/favicon.ico",d:"free-fire"},
     {n:"Telegram",i:"telegram.org",c:"#229ED9",u:"https://telegram.org/favicon.ico",d:"telegram"},
-    {n:"X (Twitter)",i:"x.com",c:"#111111",u:"https://x.com/favicon.ico",d:"twitter"},
-    {n:"Mercado Livre",i:"mercadolivre.com.br",c:"#FFE600",u:"https://www.mercadolivre.com.br/favicon.ico",d:"mercado-livre"},
     {n:"Shopee",i:"shopee.com.br",c:"#EE4D2D",u:"https://shopee.com.br/favicon.ico",d:"shopee"},
     {n:"Nubank",i:"nubank.com.br",c:"#820AD1",u:"https://nubank.com.br/favicon.ico",d:"nubank"},
-    {n:"Pix · Banco Central",i:"bcb.gov.br",c:"#32BCAD",u:"https://www.bcb.gov.br/favicon.ico",d:"pix"},
+    {n:"Pix · Banco Central",i:"bcb.gov.br",logo:"img/pix.png",c:"#32BCAD",u:"https://www.bcb.gov.br/favicon.ico",d:"pix"},
     {n:"Banco do Brasil",i:"bb.com.br",c:"#FCFC30",u:"https://www.bb.com.br/favicon.ico",d:"banco-do-brasil"},
     {n:"Caixa",i:"caixa.gov.br",c:"#005CA9",u:"https://www.caixa.gov.br/favicon.ico",d:"caixa"},
     {n:"Itaú",i:"itau.com.br",c:"#EC7000",u:"https://www.itau.com.br/favicon.ico",d:"itau"},
@@ -485,7 +482,7 @@ tabs.forEach(t => t.addEventListener("click", () => {
   const DD="https://downdetector.com.br/fora-do-ar/";
   const list=document.getElementById("apps"), sum=document.getElementById("st-sum"), time=document.getElementById("st-time"), btn=document.getElementById("st-run");
   if(!list) return;
-  list.innerHTML=APPS.map((a,i)=>`<li><div class="top"><span class="lg logo" style="--c:${a.c}" data-l="${a.n[0]}" aria-hidden="true"><img src="https://www.google.com/s2/favicons?domain=${a.i}&sz=64" alt="" width="24" height="24" loading="lazy" onerror="this.parentNode.classList.remove('logo');this.parentNode.textContent=this.parentNode.dataset.l"></span><span class="nm">${a.n}</span></div>
+  list.innerHTML=APPS.map((a,i)=>`<li><div class="top"><span class="lg logo" style="--c:${a.c}" data-l="${a.n[0]}" aria-hidden="true"><img src="${a.logo||"https://www.google.com/s2/favicons?domain="+a.i+"&sz=64"}" alt="" width="24" height="24" loading="lazy" onerror="this.parentNode.classList.remove('logo');this.parentNode.textContent=this.parentNode.dataset.l"></span><span class="nm">${a.n}</span></div>
     <div class="stt wait" id="st${i}"><span class="dot"></span><span>verificando…</span></div>
     <div class="spark" id="sp${i}" aria-hidden="true"></div><div class="spk" id="sk${i}"></div>
     <a class="dd" href="${DD}${a.d}/" target="_blank" rel="noopener" aria-label="Ver relatos de falha do ${a.n} no Downdetector">Ver relatos ↗</a></li>`).join("");
