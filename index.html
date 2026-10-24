@@ -208,6 +208,10 @@ nav a{white-space:nowrap}
 .apps .lg img{width:24px;height:24px;display:block}
 .apps .nm{font-weight:800;font-size:17px}
 .apps .stt{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}
+.spark{height:40px;border-radius:8px;background:var(--bg);overflow:hidden}
+.spark svg{width:100%;height:100%;display:block}
+.spark.bad{background:color-mix(in srgb,#d93a2b 8%,var(--bg))}
+.spk{font-size:12px;color:var(--muted);margin-top:-2px}
 .apps .dot{width:10px;height:10px;border-radius:50%;background:#aab;flex:none}
 .apps .ok .dot{background:#1E9E52}.apps .slow .dot{background:var(--amber)}.apps .bad .dot{background:#d93a2b}.apps .wait .dot{animation:pl 1.2s infinite;background:#8a92b8}
 .apps .ok{color:#1b8a48}.apps .slow{color:#a86d00}.apps .bad{color:#c22f21}.apps .wait{color:var(--muted)}
@@ -380,7 +384,7 @@ nav a{white-space:nowrap}
     </div>
     <div class="st-sum" id="st-sum" aria-live="polite"><span class="ic">⏳</span><div>Verificando os aplicativos…</div></div>
     <ul class="apps" id="apps"></ul>
-    <p class="st-note">O teste mede se cada serviço responde a partir da sua conexão. Em “Ver relatos”, o Downdetector (downdetector.com.br) mostra se outras pessoas estão relatando falhas no app agora.</p>
+    <p class="st-note">O teste mede se cada serviço responde a partir da sua conexão. O gráfico mostra as últimas verificações feitas neste aparelho: verde = estável, amarelo = lento, vermelho = caindo (barras vermelhas são falhas). Em “Ver relatos”, o Downdetector (downdetector.com.br) mostra se outras pessoas estão relatando falhas no app agora.</p>
   </div>
 </section>
 
@@ -464,13 +468,19 @@ tabs.forEach(t => t.addEventListener("click", () => {
     {n:"Google",i:"google.com",c:"#4285F4",u:"https://www.google.com/favicon.ico",d:"google"},
     {n:"Gmail",i:"mail.google.com",c:"#EA4335",u:"https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico",d:"gmail"},
     {n:"Spotify",i:"spotify.com",c:"#1DB954",u:"https://open.spotify.com/favicon.ico",d:"spotify"},
-    {n:"Free Fire",i:"ff.garena.com",c:"#F29A1F",u:"https://ff.garena.com/favicon.ico",d:"free-fire"}
+    {n:"Free Fire",i:"ff.garena.com",c:"#F29A1F",u:"https://ff.garena.com/favicon.ico",d:"free-fire"},
+    {n:"Telegram",i:"telegram.org",c:"#229ED9",u:"https://telegram.org/favicon.ico",d:"telegram"},
+    {n:"X (Twitter)",i:"x.com",c:"#111111",u:"https://x.com/favicon.ico",d:"twitter"},
+    {n:"Mercado Livre",i:"mercadolivre.com.br",c:"#FFE600",u:"https://www.mercadolivre.com.br/favicon.ico",d:"mercado-livre"},
+    {n:"Shopee",i:"shopee.com.br",c:"#EE4D2D",u:"https://shopee.com.br/favicon.ico",d:"shopee"},
+    {n:"Nubank",i:"nubank.com.br",c:"#820AD1",u:"https://nubank.com.br/favicon.ico",d:"nubank"}
   ];
   const DD="https://downdetector.com.br/fora-do-ar/";
   const list=document.getElementById("apps"), sum=document.getElementById("st-sum"), time=document.getElementById("st-time"), btn=document.getElementById("st-run");
   if(!list) return;
   list.innerHTML=APPS.map((a,i)=>`<li><div class="top"><span class="lg logo" style="--c:${a.c}" data-l="${a.n[0]}" aria-hidden="true"><img src="https://www.google.com/s2/favicons?domain=${a.i}&sz=64" alt="" width="24" height="24" loading="lazy" onerror="this.parentNode.classList.remove('logo');this.parentNode.textContent=this.parentNode.dataset.l"></span><span class="nm">${a.n}</span></div>
     <div class="stt wait" id="st${i}"><span class="dot"></span><span>verificando…</span></div>
+    <div class="spark" id="sp${i}" aria-hidden="true"></div><div class="spk" id="sk${i}"></div>
     <a class="dd" href="${DD}${a.d}/" target="_blank" rel="noopener" aria-label="Ver relatos de falha do ${a.n} no Downdetector">Ver relatos ↗</a></li>`).join("");
   function probe(url){
     return new Promise(res=>{
@@ -482,6 +492,31 @@ tabs.forEach(t => t.addEventListener("click", () => {
     });
   }
   const lista=a=>a.length>1?a.slice(0,-1).join(", ")+" e "+a[a.length-1]:a[0];
+  /* histórico das verificações neste aparelho (até 30 pontos das últimas 6 horas) para o gráfico verde/vermelho */
+  const HK="speed-status-hist", MAXP=30, MAXAGE=6*3600e3;
+  let H={}; try{ H=JSON.parse(localStorage.getItem(HK)||"{}")||{}; }catch(e){ H={}; }
+  const now=()=>Date.now();
+  APPS.forEach(a=>{ H[a.d]=(H[a.d]||[]).filter(p=>now()-p.t<MAXAGE).slice(-MAXP); });
+  function save(){ try{ localStorage.setItem(HK,JSON.stringify(H)); }catch(e){} }
+  function spark(i){
+    const a=APPS[i], pts=H[a.d]||[], el=document.getElementById("sp"+i), k=document.getElementById("sk"+i); if(!el) return;
+    if(pts.length<2){ el.innerHTML=""; k.textContent="montando o gráfico…"; return; }
+    const W=200,Hh=40,pad=3, n=pts.length, step=(W-2*pad)/Math.max(n-1,1), x0=pad;
+    const okms=pts.filter(p=>p.ms!=null).map(p=>p.ms), cap=Math.min(3500,Math.max(600,...okms,0)*1.25);
+    const y=ms=>pad+(Hh-2*pad)*(Math.min(ms,cap)/cap);   // sobe = mais rápido (mais perto do topo)
+    const fails=pts.filter(p=>p.ms==null).length, last=pts[n-1], recentFail=pts.slice(-3).filter(p=>p.ms==null).length;
+    const bad= last.ms==null || recentFail>=2, slow=!bad&&last.ms>2500;
+    const col= bad?"#d93a2b":slow?"#e0a100":"#1E9E52";
+    let line="", area="", dots="";
+    pts.forEach((p,j)=>{ const x=(x0+j*step).toFixed(1);
+      if(p.ms==null){ dots+=`<rect x="${(x-2.5)}" y="${pad}" width="5" height="${Hh-2*pad}" rx="2" fill="#d93a2b" opacity=".85"/>`; line+=" "; return; }
+      line+=`${line&&!line.endsWith(" ")?" L":" M"}${x} ${y(p.ms).toFixed(1)}`; });
+    const ok=pts.map((p,j)=>p.ms==null?null:[x0+j*step,y(p.ms)]).filter(Boolean);
+    if(ok.length>1) area=`<path d="M${ok[0][0]} ${Hh} ${ok.map(q=>`L${q[0].toFixed(1)} ${q[1].toFixed(1)}`).join(" ")} L${ok[ok.length-1][0].toFixed(1)} ${Hh}Z" fill="${col}" opacity=".14"/>`;
+    el.innerHTML=`<svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none">${area}<path d="${line.trim()}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>${dots}</svg>`;
+    el.className="spark "+(bad?"bad":slow?"slow":"ok");
+    k.textContent=`${bad?"🔴 caindo agora":slow?"🟡 lento":"🟢 estável"} · ${n} verificações · ${fails} ${fails===1?"falha":"falhas"}`;
+  }
   let busy=false;
   async function run(){
     if(busy) return; busy=true; btn.disabled=true; btn.textContent="Verificando…";
@@ -489,6 +524,8 @@ tabs.forEach(t => t.addEventListener("click", () => {
     if(!navigator.onLine){ sum.className="st-sum bad"; sum.innerHTML='<span class="ic">📵</span><div>Seu aparelho está sem internet.<p>Confira o Wi-Fi ou os dados móveis. Se o roteador da Speed estiver com luz vermelha, <a data-wa2 href="#">chame a Speed no WhatsApp</a>.</p></div>'; }
     const r=await Promise.all(APPS.map(a=>probe(a.u)));
     let bad=[], slow=[];
+    r.forEach((x,i)=>{ const a0=APPS[i]; (H[a0.d]=H[a0.d]||[]).push({t:now(),ms:x.ok?x.ms:null}); H[a0.d]=H[a0.d].slice(-MAXP); });
+    save(); APPS.forEach((a,i)=>spark(i));
     r.forEach((x,i)=>{ const el=document.getElementById("st"+i), a=APPS[i];
       if(!x.ok){ bad.push(a.n); el.className="stt bad"; el.lastElementChild.textContent="Sem resposta"; }
       else if(x.ms>2500){ slow.push(a.n); el.className="stt slow"; el.lastElementChild.textContent="Lento · "+x.ms+" ms"; }
@@ -503,11 +540,12 @@ tabs.forEach(t => t.addEventListener("click", () => {
     time.textContent="Última verificação: "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     btn.disabled=false; btn.textContent="Verificar agora"; busy=false;
   }
+  APPS.forEach((a,i)=>spark(i));
   btn.addEventListener("click",run);
   // roda quando a seção aparece e repete a cada 60 s enquanto ela estiver na tela
   let timer=null, seen=false;
   const io=new IntersectionObserver(es=>es.forEach(e=>{
-    if(e.isIntersecting){ if(!seen){ seen=true; run(); } if(!timer) timer=setInterval(()=>{ if(!document.hidden) run(); },60000); }
+    if(e.isIntersecting){ if(!seen){ seen=true; (async()=>{ await run(); for(let k=0;k<3;k++){ await new Promise(r=>setTimeout(r,5000)); if(!document.hidden) await run(); } })(); } if(!timer) timer=setInterval(()=>{ if(!document.hidden) run(); },60000); }
     else if(timer){ clearInterval(timer); timer=null; }
   }));
   io.observe(document.getElementById("status"));
